@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MicroService4Net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,8 @@ namespace premier_league_genetic_algorithm
     {
         static void Main(string[] args)
         {
+            var microservice = new MicroService();
+            microservice.Run(args);
         }
     }
 }
