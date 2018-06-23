@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace premier_league_genetic_algorithm.Models
 {
-    public class GenericPlayer
+    public class Player
     {
         public int id { get; set; }        
         public string web_name { get; set; }
@@ -56,7 +56,7 @@ namespace premier_league_genetic_algorithm.Models
         public string threat { get; set; }
         public string ict_index { get; set; }
         public int ea_index { get; set; }
-        public int element_type { get; set; }
+        public Role element_type { get; set; }
         public int team { get; set; }
     }
 }

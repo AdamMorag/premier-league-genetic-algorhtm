@@ -87,8 +87,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\ExampleController.cs" />
-    <Compile Include="Models\GenericPlayer.cs" />
+    <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Data\PlayerDataBase.cs" />
+    <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\Role.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
