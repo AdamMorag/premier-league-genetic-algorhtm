@@ -34,7 +34,7 @@ namespace premier_league_genetic_algorithm.Models
         public int loaned_out { get; set; }
         public int total_points { get; set; }
         public int event_points { get; set; }
-        public string points_per_game { get; set; }
+        public double points_per_game { get; set; }
         public string ep_this { get; set; }
         public string ep_next { get; set; }
         public bool special { get; set; }
@@ -54,7 +54,7 @@ namespace premier_league_genetic_algorithm.Models
         public string influence { get; set; }
         public string creativity { get; set; }
         public string threat { get; set; }
-        public string ict_index { get; set; }
+        public float ict_index { get; set; }
         public int ea_index { get; set; }
         public Role element_type { get; set; }
         public int team { get; set; }
