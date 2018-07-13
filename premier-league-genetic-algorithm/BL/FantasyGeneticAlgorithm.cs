@@ -6,8 +6,7 @@ using premier_league_genetic_algorithm.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace premier_league_genetic_algorithm.BL
 {
@@ -56,8 +55,10 @@ namespace premier_league_genetic_algorithm.BL
             //create the GA itself 
             var ga = new GeneticAlgorithm(population, evaluateFitness);
 
+            Chart chart = createNewChart();
+
             //subscribe to the GAs Generation Complete event 
-            ga.OnGenerationComplete += ga_OnGenerationComplete;
+            ga.OnGenerationComplete += this.getOnGenerationComplete(chart);
 
             //add the operators to the ga process pipeline 
             ga.Operators.Add(elite);
@@ -69,9 +70,28 @@ namespace premier_league_genetic_algorithm.BL
 
             var topSolution = this.getPlayersFromChromosome(ga.Population.GetTop(1).First());
 
-            this.calculator.PrintFitnessDetails(topSolution);
+            var lastPoint = chart.Series["fitness"].Points.Last();
+            lastPoint.Label = lastPoint.YValues[0].ToString();
+
+            chart.SaveImage("./results/fitness.png", System.Drawing.Imaging.ImageFormat.Png);
 
             return topSolution.OrderBy(p => p.element_type);
+        }
+
+        private Chart createNewChart()
+        {
+            Chart chart = new Chart();
+            chart.Size = new System.Drawing.Size(640, 320);
+            chart.ChartAreas.Add("ChartArea1");
+            chart.Legends.Add("legend1");
+            chart.ChartAreas["ChartArea1"].AxisX.Title = "Generations";
+            chart.ChartAreas["ChartArea1"].AxisY.Title = "Fitness";
+
+
+            chart.Series.Add("fitness");            
+            chart.Series["fitness"].LegendText = "Fitness";
+            chart.Series["fitness"].ChartType = SeriesChartType.Spline;            
+            return chart;
         }
 
         private Chromosome createRandomChromosome(Random rnd)
@@ -123,13 +143,6 @@ namespace premier_league_genetic_algorithm.BL
 
         }
 
-        private void ga_OnGenerationComplete(object sender, GaEventArgs e)
-        {
-            var fittest = e.Population.GetTop(1)[0];
-            var fitness = evaluateFitness(fittest);
-            Console.WriteLine("Generation: {0}, Fitness: {1}, Size: {2}", e.Generation, fitness, e.Population.PopulationSize);
-        }
-
         private double evaluateFitness(Chromosome chromsome)
         {
             var players = this.getPlayersFromChromosome(chromsome);
@@ -144,9 +157,16 @@ namespace premier_league_genetic_algorithm.BL
             });
         }
 
-        public bool TerminateAlgorithm(Population population,int currentGeneration, long currentEvaluation)
+        private GeneticAlgorithm.GenerationCompleteHandler getOnGenerationComplete(Chart chart)
         {
-            return currentGeneration > NUM_OF_GENERATIONS;
+            return (object sender, GaEventArgs e) => 
+            {
+                var fittest = e.Population.GetTop(1)[0];
+                var fitness = evaluateFitness(fittest);
+
+                chart.Series["fitness"].Points.AddXY(e.Generation, fitness);
+                Console.WriteLine("Generation: {0}, Fitness: {1}, Size: {2}", e.Generation, fitness, e.Population.PopulationSize);
+            };
         }
     }
 }
