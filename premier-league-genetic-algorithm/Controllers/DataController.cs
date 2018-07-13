@@ -37,12 +37,12 @@ namespace premier_league_genetic_algorithm.Controllers
         }
 
         [Route("GetSuggestion")]
-        public TeamSuggestion GetSuggestion()
+        public TeamSuggestion GetSuggestion([FromUri]int populationSize, [FromUri]int amountOfGenerations)
         {
             var players = PlayerDataBase.Players;
             var algorithm = new FantasyGeneticAlgorithm(players);            
 
-            var teamPlayers = algorithm.FindSolution().Select(p => new PlayerSimple()
+            var teamPlayers = algorithm.FindSolution(populationSize, amountOfGenerations).Select(p => new PlayerSimple()
             {
                 web_name = p.web_name,
                 ict_index = p.ict_index,
@@ -58,7 +58,8 @@ namespace premier_league_genetic_algorithm.Controllers
                 Players = teamPlayers,
                 Cost = teamPlayers.Sum(p => p.now_cost),
                 IctIndex = teamPlayers.Sum(p => p.ict_index),
-                TotalPoints = teamPlayers.Sum(p => p.total_points)
+                TotalPoints = teamPlayers.Sum(p => p.total_points),
+                Teams = teamPlayers.GroupBy(p => p.team).ToDictionary(g => g.Key, g => g.Count())
             };
         }
     }

@@ -24,7 +24,7 @@ namespace premier_league_genetic_algorithm.BL
             this.calculator = new FitnessCaclulator(players);
         }
 
-        public IEnumerable<Player> FindSolution()
+        public IEnumerable<Player> FindSolution(int populationSize, int amountOfGenerations)
         {
             const double crossoverProbability = 0.65;
             const double mutationProbability = 0.08;
@@ -36,7 +36,7 @@ namespace premier_league_genetic_algorithm.BL
             Random rnd = new Random();
 
             //create the chromosomes
-            for (var p = 0; p < 1000; p++)
+            for (var p = 0; p < populationSize; p++)
             {
                 Chromosome chromosome = createRandomChromosome(rnd);
                 population.Solutions.Add(chromosome);
@@ -65,7 +65,7 @@ namespace premier_league_genetic_algorithm.BL
             ga.Operators.Add(mutation);
 
             //run the GA 
-            ga.Run(TerminateAlgorithm);
+            ga.Run(GetTerminateFunction(amountOfGenerations));
 
             var topSolution = this.getPlayersFromChromosome(ga.Population.GetTop(1).First());
 
@@ -127,7 +127,7 @@ namespace premier_league_genetic_algorithm.BL
         {
             var fittest = e.Population.GetTop(1)[0];
             var fitness = evaluateFitness(fittest);
-            Console.WriteLine("Generation: {0}, Fitness: {1}", e.Generation, fitness);
+            Console.WriteLine("Generation: {0}, Fitness: {1}, Size: {2}", e.Generation, fitness, e.Population.PopulationSize);
         }
 
         private double evaluateFitness(Chromosome chromsome)
@@ -136,10 +136,17 @@ namespace premier_league_genetic_algorithm.BL
             return this.calculator.CalculateFitness(players);
         }
 
-        public bool TerminateAlgorithm(Population population,
-        int currentGeneration, long currentEvaluation)
+        private TerminateFunction GetTerminateFunction(int amountOfGenerations)
         {
-            return currentGeneration > 100;
+            return new TerminateFunction((population, currentGeneration, currentEvaluation) =>
+            {
+                return currentGeneration >= amountOfGenerations;
+            });
+        }
+
+        public bool TerminateAlgorithm(Population population,int currentGeneration, long currentEvaluation)
+        {
+            return currentGeneration > NUM_OF_GENERATIONS;
         }
     }
 }
