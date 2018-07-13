@@ -112,8 +112,8 @@
     <Compile Include="BL\FitnessCaclulator.cs" />
     <Compile Include="BL\GeneticOperators\SwapPlayerMutation.cs" />
     <Compile Include="BL\MathUtils.cs" />
-    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Controllers\TeamSuggestionController.cs" />
+    <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Data\PlayerDataBase.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\PlayerEqualityComparer.cs" />
