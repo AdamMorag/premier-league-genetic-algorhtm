@@ -13,16 +13,22 @@ namespace premier_league_genetic_algorithm.BL.GeneticOperators
     {
         private Player[] players;
         private Random rnd;
+        private Dictionary<Role, List<Player>> groupedPlayers;
 
-        public SwapPlayerMutation(double mutationProbability, Player[] players) : base(mutationProbability)
+        public SwapPlayerMutation(double mutationProbability, Player[] players, Dictionary<Role, List<Player>> groupedPlayers) : base(mutationProbability)
         {
             this.players = players;
+            this.groupedPlayers = groupedPlayers;
             rnd = new Random();
         }
 
         protected override void MutateGene(Gene gene)
         {
-            gene.ObjectValue = rnd.Next(0, this.players.Count());
+            var player = this.players[(int)gene.ObjectValue];
+            var rndPlayerIndexForRole = rnd.Next(0, this.groupedPlayers[player.element_type].Count);
+            var newPlayer = this.groupedPlayers[player.element_type].ElementAt(rndPlayerIndexForRole);
+            var newPlayerRealIndex = Array.IndexOf(this.players, newPlayer);
+            gene.ObjectValue = newPlayerRealIndex;
         }
     }
 }

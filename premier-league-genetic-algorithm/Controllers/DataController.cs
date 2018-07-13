@@ -51,7 +51,7 @@ namespace premier_league_genetic_algorithm.Controllers
                 total_points = p.total_points,
                 element_type = p.element_type,
                 team = p.team
-            }).OrderBy(p => p.element_type);
+            }).OrderBy(p => p.element_type).ThenBy(p => p.web_name);
 
             return new TeamSuggestion()
             {

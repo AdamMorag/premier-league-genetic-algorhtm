@@ -50,7 +50,7 @@ namespace premier_league_genetic_algorithm.BL
                 CrossoverType = CrossoverType.SinglePoint
             };
 
-            var mutation = new SwapPlayerMutation(mutationProbability, this.players);
+            var mutation = new SwapPlayerMutation(mutationProbability, this.players, this.groupedPlayers);
 
             //create the GA itself 
             var ga = new GeneticAlgorithm(population, evaluateFitness);

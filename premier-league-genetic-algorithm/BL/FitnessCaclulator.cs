@@ -57,13 +57,13 @@ namespace premier_league_genetic_algorithm.BL
         private List<SoftConstraint> initializeSoftConstraints(IEnumerable<Player> players)
         {
             var playersIct = players.Select(p => Convert.ToDouble(p.ict_index));            
-            var ictConstraint = new IctConstraint(0.25f, (float)minTeamValue(playersIct), (float)maxTeamValue(playersIct));
+            var ictConstraint = new IctConstraint(0.15f, (float)minTeamValue(playersIct), (float)maxTeamValue(playersIct));
 
             var playersPointsPerGame = players.Select(p => p.points_per_game);
-            var pointsPerGameConstraint = new PointsPerGameConstraint(0.25f, minTeamValue(playersPointsPerGame), maxTeamValue(playersPointsPerGame));
+            var pointsPerGameConstraint = new PointsPerGameConstraint(0.15f, minTeamValue(playersPointsPerGame), maxTeamValue(playersPointsPerGame));
 
             var playersTotalPoints = players.Select(p => Convert.ToDouble(p.total_points));
-            var totalPointsConstaint = new TotalPointsConstraint(0.5f, Convert.ToInt32(minTeamValue(playersTotalPoints)), Convert.ToInt32(maxTeamValue(playersTotalPoints)));
+            var totalPointsConstaint = new TotalPointsConstraint(0.7f, Convert.ToInt32(minTeamValue(playersTotalPoints)), Convert.ToInt32(maxTeamValue(playersTotalPoints)));
 
             return new List<SoftConstraint>() { ictConstraint, pointsPerGameConstraint, totalPointsConstaint };
         }
