@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GAF.452, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GAF.2.3.1\lib\net452\GAF.452.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MicroService4Net, Version=2.0.5948.28056, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MicroService4Net.2.0.5948.28056\lib\net45\MicroService4Net.dll</HintPath>
       <Private>True</Private>
@@ -87,6 +91,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BL\Constraints\Constraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\HardConstraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\RoleConstraint.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Data\PlayerDataBase.cs" />
     <Compile Include="Models\Player.cs" />
@@ -100,6 +107,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="BL\Constraints\SoftConstraints\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
