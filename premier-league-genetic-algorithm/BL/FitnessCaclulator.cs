@@ -12,17 +12,15 @@ namespace premier_league_genetic_algorithm.BL
     public class FitnessCaclulator
     {
         private List<HardConstraint> hardConstraints;
-        private List<SoftConstraint> softConstraints;
-        private IEnumerable<Player> players;
+        private List<SoftConstraint> softConstraints;        
 
         public FitnessCaclulator(IEnumerable<Player> players)
-        {
-            this.players = players;
+        {            
             hardConstraints = initializeHardConstraints();
             softConstraints = initializeSoftConstraints(players);
         }
 
-        public double CalculateFitness()
+        public double CalculateFitness(IEnumerable<Player> players)
         {
             if (this.hardConstraints.Any(c => !c.ValidateSolution(players)))
                 return 0;
