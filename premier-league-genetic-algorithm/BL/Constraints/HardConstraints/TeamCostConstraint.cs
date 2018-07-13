@@ -18,7 +18,7 @@ namespace premier_league_genetic_algorithm.BL.Constraints.HardConstraints
 
         public override bool ValidateSolution(IEnumerable<Player> players)
         {
-            throw new NotImplementedException();
+            return players.Sum(p => p.now_cost) <= MAX_TEAM_COST;
         }
     }
 }
