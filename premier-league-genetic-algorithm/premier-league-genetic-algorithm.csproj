@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GAF">
+      <HintPath>..\packages\GAF.2.3.1\lib\net45\GAF.dll</HintPath>
+    </Reference>
     <Reference Include="GAF.452, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\GAF.2.3.1\lib\net452\GAF.452.dll</HintPath>
       <Private>True</Private>
@@ -93,11 +96,27 @@
   <ItemGroup>
     <Compile Include="BL\Constraints\Constraint.cs" />
     <Compile Include="BL\Constraints\HardConstraints\HardConstraint.cs" />
-    <Compile Include="BL\Constraints\HardConstraints\RoleConstraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\PlayerUniquenessConstraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\RoleCompositionConstraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\RoleCompositionConstraintConfig.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\TeamCompositionConstraint.cs" />
+    <Compile Include="BL\Constraints\HardConstraints\TeamCostConstraint.cs" />
+    <Compile Include="BL\Constraints\SoftConstraints\IctConstraint.cs" />
+    <Compile Include="BL\Constraints\SoftConstraints\PointsPerGameConstraint.cs" />
+    <Compile Include="BL\Constraints\SoftConstraints\SoftConstraint.cs" />
+    <Compile Include="BL\Constraints\SoftConstraints\TotalPointsConstraint.cs" />
+    <Compile Include="BL\FantasyGeneticAlgorithm.cs" />
+    <Compile Include="BL\FitnessCaclulator.cs" />
+    <Compile Include="BL\GeneticOperators\SwapPlayerMutation.cs" />
+    <Compile Include="BL\MathUtils.cs" />
     <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Controllers\TeamSuggestionController.cs" />
     <Compile Include="Data\PlayerDataBase.cs" />
     <Compile Include="Models\Player.cs" />
+    <Compile Include="Models\PlayerEqualityComparer.cs" />
+    <Compile Include="Models\PlayerSimple.cs" />
     <Compile Include="Models\Role.cs" />
+    <Compile Include="Models\TeamSuggestion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -108,9 +127,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="BL\Constraints\SoftConstraints\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

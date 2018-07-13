@@ -18,13 +18,14 @@ namespace premier_league_genetic_algorithm.BL.Constraints.HardConstraints
 
         public override bool ValidateSolution(IEnumerable<Player> players)
         {
-            return players.GroupBy(p => p.element_type)
-                .All(roleGroup => validateRoleCount(roleGroup));
+            var groupedPlayers = players.GroupBy(p => p.element_type);
+
+            return groupedPlayers.All(roleGroup => validateRoleCount(roleGroup));
         }
 
         private bool validateRoleCount(IGrouping<Role, Player> roleGroup)
         {
-            var roleCount = roleGroup.Count();
+            var roleCount = roleGroup.Count();            
 
             return roleCount.Equals(this.config.config[roleGroup.Key]);
         }

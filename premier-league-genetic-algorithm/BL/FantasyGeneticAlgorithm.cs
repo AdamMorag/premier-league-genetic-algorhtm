@@ -15,10 +15,12 @@ namespace premier_league_genetic_algorithm.BL
     {
         private Player[] players;
         private FitnessCaclulator calculator;
+        private Dictionary<Role, List<Player>> groupedPlayers;
 
         public FantasyGeneticAlgorithm(Player[] players)
         {
             this.players = players;
+            this.groupedPlayers = players.GroupBy(p => p.element_type).ToDictionary(g => g.Key, x => x.ToList());
             this.calculator = new FitnessCaclulator(players);
         }
 
@@ -34,15 +36,9 @@ namespace premier_league_genetic_algorithm.BL
             Random rnd = new Random();
 
             //create the chromosomes
-            for (var p = 0; p < 100; p++)
+            for (var p = 0; p < 1000; p++)
             {
-                var chromosome = new Chromosome();
-                for (var g = 0; g < 11; g++)
-                {
-                    chromosome.Genes.Add(new Gene(rnd.Next(0, this.players.Count())));
-                }
-
-                chromosome.Genes.ShuffleFast();
+                Chromosome chromosome = createRandomChromosome(rnd);
                 population.Solutions.Add(chromosome);
             }
 
@@ -78,6 +74,49 @@ namespace premier_league_genetic_algorithm.BL
             return topSolution.OrderBy(p => p.element_type);
         }
 
+        private Chromosome createRandomChromosome(Random rnd)
+        {
+            var chromosome = new Chromosome();
+
+            // Goalkeepers
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Goalkeeper)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Goalkeeper)));
+
+            // Defenders
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
+
+            // Midfielders
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));            
+
+            // Forwards
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
+            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
+
+            //chromosome.Genes.ShuffleFast();
+            return chromosome;
+        }
+
+        private Player getRandomPlayer(Random rnd, Role role)
+        {
+            var rndPlayerIndexForRole = rnd.Next(0, this.groupedPlayers[role].Count);
+            return this.groupedPlayers[role].ElementAt(rndPlayerIndexForRole);
+        }
+
+        private int getRandomPlayerIndex(Random rnd, Role role)
+        {
+            var player = this.getRandomPlayer(rnd, role);
+            return Array.IndexOf(this.players, player);
+        }
+
         private IEnumerable<Player> getPlayersFromChromosome(Chromosome chromsome)
         {
             return chromsome.Genes.Select(g => this.players[(int)g.ObjectValue]);
@@ -100,7 +139,7 @@ namespace premier_league_genetic_algorithm.BL
         public bool TerminateAlgorithm(Population population,
         int currentGeneration, long currentEvaluation)
         {
-            return currentGeneration > 50;
+            return currentGeneration > 100;
         }
     }
 }

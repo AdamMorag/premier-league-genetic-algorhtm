@@ -70,12 +70,12 @@ namespace premier_league_genetic_algorithm.BL
 
         private double maxTeamValue(IEnumerable<double> values)
         {
-            return values.OrderByDescending(v => v).Take(11).Sum();
+            return values.OrderByDescending(v => v).Take(15).Sum();
         }
 
         private double minTeamValue(IEnumerable<double> values)
         {
-            return values.OrderBy(v => v).Take(11).Sum();
+            return values.OrderBy(v => v).Take(15).Sum();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace premier_league_genetic_algorithm
     {
         static void Main(string[] args)
         {
-            var microservice = new MicroService();
+            var microservice = new MicroService();            
             microservice.Run(args);
         }
     }
