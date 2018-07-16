@@ -2,6 +2,7 @@
 using GAF.Extensions;
 using GAF.Operators;
 using premier_league_genetic_algorithm.BL.GeneticOperators;
+using premier_league_genetic_algorithm.BL.Performance;
 using premier_league_genetic_algorithm.Models;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace premier_league_genetic_algorithm.BL
         private Player[] players;
         private FitnessCaclulator calculator;
         private Dictionary<Role, List<Player>> groupedPlayers;
-        private Random rndGenerator; 
+        private ChromosomeUtils chromosomeUtils;
+        private PerformanceMonitor performanceMonitor;
         
         #endregion
 
@@ -28,7 +30,8 @@ namespace premier_league_genetic_algorithm.BL
             this.players = players;
             this.groupedPlayers = players.GroupBy(p => p.element_type).ToDictionary(g => g.Key, x => x.ToList());
             this.calculator = new FitnessCaclulator(players);
-            this.rndGenerator = new Random();
+            this.chromosomeUtils = new ChromosomeUtils(players, groupedPlayers);
+            this.performanceMonitor = new ChartPerformanceMonitor(evaluateFitness);
         } 
         
         #endregion
@@ -39,7 +42,7 @@ namespace premier_league_genetic_algorithm.BL
         {
             var newPopulation = this.runAlgorithem(population, amountOfGenerations);
 
-            var topSolution = this.getPlayersFromChromosome(newPopulation.GetTop(1).First());
+            var topSolution = this.chromosomeUtils.ConvertChromosome(newPopulation.GetTop(1).First());
 
             return topSolution.OrderBy(p => p.element_type);
         }
@@ -52,13 +55,13 @@ namespace premier_league_genetic_algorithm.BL
             //create the chromosomes
             for (var p = 0; p < populationSize; p++)
             {
-                Chromosome chromosome = createRandomChromosome(this.rndGenerator);
+                Chromosome chromosome = this.chromosomeUtils.GenerateRandomSolution();
                 population.Solutions.Add(chromosome);
             }
 
             var newPopulation = this.runAlgorithem(population, amountOfGenerations);
 
-            var topSolution = this.getPlayersFromChromosome(newPopulation.GetTop(1).First());
+            var topSolution = this.chromosomeUtils.ConvertChromosome(newPopulation.GetTop(1).First());
 
             return topSolution.OrderBy(p => p.element_type);
         }
@@ -71,7 +74,7 @@ namespace premier_league_genetic_algorithm.BL
             //create the chromosomes
             for (var p = 0; p < populationSize; p++)
             {
-                Chromosome chromosome = createRandomChromosome(this.rndGenerator);
+                Chromosome chromosome = this.chromosomeUtils.GenerateRandomSolution();
                 population.Solutions.Add(chromosome);
             }
 
@@ -100,12 +103,10 @@ namespace premier_league_genetic_algorithm.BL
             var mutation = new SwapPlayerMutation(mutationProbability, this.players, this.groupedPlayers);
 
             //create the GA itself 
-            var ga = new GeneticAlgorithm(population, evaluateFitness);
-
-            Chart chart = createNewChart();
+            var ga = new GeneticAlgorithm(population, evaluateFitness);            
 
             //subscribe to the GAs Generation Complete event 
-            ga.OnGenerationComplete += this.getOnGenerationComplete(chart);
+            ga.OnGenerationComplete += this.getOnGenerationComplete();
 
             //add the operators to the ga process pipeline 
             ga.Operators.Add(elite);
@@ -115,82 +116,14 @@ namespace premier_league_genetic_algorithm.BL
             //run the GA 
             ga.Run(GetTerminateFunction(amountOfGenerations));
 
-            var lastPoint = chart.Series["fitness"].Points.Last();
-            lastPoint.Label = lastPoint.YValues[0].ToString();
-
-            chart.SaveImage("./results/fitness.png", System.Drawing.Imaging.ImageFormat.Png);
+            this.performanceMonitor.SavePerformanceLog("./results");
 
             return ga.Population;
         }
 
-        private Chart createNewChart()
-        {
-            Chart chart = new Chart();
-            chart.Size = new System.Drawing.Size(640, 320);
-            chart.ChartAreas.Add("ChartArea1");
-            chart.Legends.Add("legend1");
-            chart.ChartAreas["ChartArea1"].AxisX.Title = "Generations";
-            chart.ChartAreas["ChartArea1"].AxisY.Title = "Fitness";
-
-
-            chart.Series.Add("fitness");
-            chart.Series["fitness"].LegendText = "Fitness";
-            chart.Series["fitness"].ChartType = SeriesChartType.Spline;
-            return chart;
-        }
-
-        private Chromosome createRandomChromosome(Random rnd)
-        {
-            var chromosome = new Chromosome();
-
-            // Goalkeepers
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Goalkeeper)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Goalkeeper)));
-
-            // Defenders
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Defender)));
-
-            // Midfielders
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Midfielder)));
-
-            // Forwards
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
-            chromosome.Genes.Add(new Gene(getRandomPlayerIndex(rnd, Role.Forward)));
-
-            //chromosome.Genes.ShuffleFast();
-            return chromosome;
-        }
-
-        private Player getRandomPlayer(Random rnd, Role role)
-        {
-            var rndPlayerIndexForRole = rnd.Next(0, this.groupedPlayers[role].Count);
-            return this.groupedPlayers[role].ElementAt(rndPlayerIndexForRole);
-        }
-
-        private int getRandomPlayerIndex(Random rnd, Role role)
-        {
-            var player = this.getRandomPlayer(rnd, role);
-            return Array.IndexOf(this.players, player);
-        }
-
-        private IEnumerable<Player> getPlayersFromChromosome(Chromosome chromsome)
-        {
-            return chromsome.Genes.Select(g => this.players[(int)g.ObjectValue]);
-
-        }
-
         private double evaluateFitness(Chromosome chromsome)
         {
-            var players = this.getPlayersFromChromosome(chromsome);
+            var players = this.chromosomeUtils.ConvertChromosome(chromsome);
             return this.calculator.CalculateFitness(players);
         }
 
@@ -202,14 +135,15 @@ namespace premier_league_genetic_algorithm.BL
             });
         }
 
-        private GeneticAlgorithm.GenerationCompleteHandler getOnGenerationComplete(Chart chart)
+        private GeneticAlgorithm.GenerationCompleteHandler getOnGenerationComplete()
         {
             return (object sender, GaEventArgs e) =>
             {
                 var fittest = e.Population.GetTop(1)[0];
                 var fitness = evaluateFitness(fittest);
 
-                chart.Series["fitness"].Points.AddXY(e.Generation, fitness);
+                this.performanceMonitor.LogPerformance(e);
+
                 Console.WriteLine("Generation: {0}, Fitness: {1}, Size: {2}", e.Generation, fitness, e.Population.PopulationSize);
             };
         } 

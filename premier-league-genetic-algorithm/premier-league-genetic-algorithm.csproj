@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BL\ChromosomeUtils.cs" />
     <Compile Include="BL\Constraints\Constraint.cs" />
     <Compile Include="BL\Constraints\HardConstraints\HardConstraint.cs" />
     <Compile Include="BL\Constraints\HardConstraints\PlayerUniquenessConstraint.cs" />
@@ -112,6 +113,8 @@
     <Compile Include="BL\FitnessCaclulator.cs" />
     <Compile Include="BL\GeneticOperators\SwapPlayerMutation.cs" />
     <Compile Include="BL\MathUtils.cs" />
+    <Compile Include="BL\Performance\ChartPerformanceMonitor.cs" />
+    <Compile Include="BL\Performance\PerformanceMonitor.cs" />
     <Compile Include="Controllers\TeamSuggestionController.cs" />
     <Compile Include="Controllers\DataController.cs" />
     <Compile Include="Data\PlayerDataBase.cs" />
@@ -130,6 +133,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
