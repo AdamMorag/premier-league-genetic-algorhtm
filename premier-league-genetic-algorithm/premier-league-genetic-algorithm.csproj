@@ -113,6 +113,8 @@
     <Compile Include="BL\FitnessCaclulator.cs" />
     <Compile Include="BL\GeneticOperators\SwapPlayerMutation.cs" />
     <Compile Include="BL\MathUtils.cs" />
+    <Compile Include="BL\Performance\ChartJSPerformanceMonitor\ChartData.cs" />
+    <Compile Include="BL\Performance\ChartJSPerformanceMonitor\ChartJsPerformanceMonitor.cs" />
     <Compile Include="BL\Performance\ChartPerformanceMonitor.cs" />
     <Compile Include="BL\Performance\PerformanceMonitor.cs" />
     <Compile Include="Controllers\TeamSuggestionController.cs" />
@@ -128,12 +130,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="BL\Performance\ChartJSPerformanceMonitor\chartData.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\DataBase.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="BL\Performance\ChartJSPerformanceMonitor\PerformanceChart.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

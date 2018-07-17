@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.7.0/moment.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>    
+</head>
+<body onload="init()">
+    <canvas id="line-chart" width="800" height="450"></canvas>
+    <script>                
+        function loadJSON(callback) {
+            var xobj = new XMLHttpRequest();
+            xobj.overrideMimeType("application/json");
+            xobj.open('GET', 'http://localhost:8080/Data/GetPerformanceData', true); // Replace 'my_data' with the path to your file
+            xobj.onreadystatechange = function () {
+                if (xobj.readyState == 4 && xobj.status == "200") {
+                    // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+                    callback(xobj.responseText);
+                }
+            };
+            xobj.send(null);
+        }
+
+        function init() {
+            loadJSON(function (response) {
+                // Parse JSON string into object
+                var actual_JSON = JSON.parse(response);
+
+                new Chart(document.getElementById("line-chart"), {
+                    type: 'line',
+                    data: actual_JSON,
+                    options: {
+                        title: {
+                            display: true,
+                            text: 'Max fitness for each generation'
+                        },
+                        scales: {
+                            xAxes: [{
+                                afterTickToLabelConversion: function (data) {
+                                    var xLabels = data.ticks;
+
+                                    xLabels.forEach(function (labels, i) {
+                                        debugger;
+                                        if (i % (actual_JSON.labels.length / 10) !== 0) {
+                                            xLabels[i] = '';
+                                        }
+                                    });
+                                }
+                            }]
+                        }
+                    }
+                });
+            });
+        }        
+    </script>
+</body>
+</html>

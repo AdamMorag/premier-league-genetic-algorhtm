@@ -3,6 +3,7 @@ using GAF.Extensions;
 using GAF.Operators;
 using premier_league_genetic_algorithm.BL.GeneticOperators;
 using premier_league_genetic_algorithm.BL.Performance;
+using premier_league_genetic_algorithm.BL.Performance.ChartJSPerformanceMonitor;
 using premier_league_genetic_algorithm.Models;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace premier_league_genetic_algorithm.BL
             this.groupedPlayers = players.GroupBy(p => p.element_type).ToDictionary(g => g.Key, x => x.ToList());
             this.calculator = new FitnessCaclulator(players);
             this.chromosomeUtils = new ChromosomeUtils(players, groupedPlayers);
-            this.performanceMonitor = new ChartPerformanceMonitor(evaluateFitness);
+            this.performanceMonitor = new ChartJsPerformanceMonitor();
         } 
         
         #endregion

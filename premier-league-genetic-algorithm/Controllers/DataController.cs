@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -35,6 +36,27 @@ namespace premier_league_genetic_algorithm.Controllers
         {
             return PlayerDataBase.Players.GroupBy(p => p.team).OrderBy(kvp => kvp.Key)
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Select(p => p.web_name));
+        }
+
+        [Route("GetPerformanceData")]
+        public object GetPerformance()
+        {
+            using (FileStream stream = new FileStream(@".\results\results.json", FileMode.Open))
+            {
+                StreamReader reader = new StreamReader(stream);
+
+                return JsonConvert.DeserializeObject(reader.ReadToEnd());
+            }
+        }
+
+        [Route("GetPerformanceReport")]
+        public HttpResponseMessage GetPerformanceReport()
+        {
+            var path = @".\BL\Performance\ChartJSPerformanceMonitor\PerformanceChart.html";
+            var response = new HttpResponseMessage();
+            response.Content = new StringContent(File.ReadAllText(path));
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            return response;
         }
     }
 }
