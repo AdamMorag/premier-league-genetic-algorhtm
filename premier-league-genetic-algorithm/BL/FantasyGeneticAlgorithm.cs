@@ -140,8 +140,7 @@ namespace premier_league_genetic_algorithm.BL
         {
             return (object sender, GaEventArgs e) =>
             {
-                var fittest = e.Population.GetTop(1)[0];
-                var fitness = evaluateFitness(fittest);
+                var fitness = e.Population.MaximumFitness;
 
                 this.performanceMonitor.LogPerformance(e);
 

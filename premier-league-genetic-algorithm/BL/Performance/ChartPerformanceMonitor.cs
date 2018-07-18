@@ -10,20 +10,17 @@ using System.IO;
 namespace premier_league_genetic_algorithm.BL.Performance
 {
     public class ChartPerformanceMonitor : PerformanceMonitor
-    {
-        private FitnessFunction fitnessFunctionDelegate;
+    {        
         private Chart chart;        
 
-        public ChartPerformanceMonitor(FitnessFunction fitnessFunctionDelegate)
-        {
-            this.fitnessFunctionDelegate = fitnessFunctionDelegate;
+        public ChartPerformanceMonitor()
+        {            
             this.chart = createNewChart();
         }
 
         public override void LogPerformance(GaEventArgs generationCompleteEvent)
         {
-            var fittest = generationCompleteEvent.Population.GetTop(1)[0];
-            var fitness = this.fitnessFunctionDelegate(fittest);
+            var fitness = generationCompleteEvent.Population.MaximumFitness;
 
             chart.Series["fitness"].Points.AddXY(generationCompleteEvent.Generation, fitness);
         }
