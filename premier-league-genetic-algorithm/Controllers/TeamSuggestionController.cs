@@ -25,31 +25,7 @@ namespace premier_league_genetic_algorithm.Controllers
             var algorithm = new FantasyGeneticAlgorithm(players);
 
             return convertSolution(algorithm.FindSolution(populationSize, amountOfGenerations));
-        }
-
-        [Route("GetAdaBoostSuggestion")]
-        public TeamSuggestion GetAdaBoostSuggestion([FromUri]int populationSize, [FromUri]int amountOfGenerations)
-        {
-            var players = PlayerDataBase.Players;
-            var algorithm = new FantasyGeneticAlgorithm(players);
-
-            int populationChunk = populationSize / 5;
-
-            var firstPopulation = algorithm.FindPopulation(populationChunk, amountOfGenerations).GetTop(populationSize / 5);
-            var secondPopulation = algorithm.FindPopulation(populationChunk, amountOfGenerations).GetTop(populationSize / 5);
-            var thirdPopulation = algorithm.FindPopulation(populationChunk, amountOfGenerations).GetTop(populationSize / 5);
-            var fourthPopulation = algorithm.FindPopulation(populationChunk, amountOfGenerations).GetTop(populationSize / 5);
-            var fithPopulation = algorithm.FindPopulation(populationChunk, amountOfGenerations).GetTop(populationSize / 5);
-
-            var wholePopulation = new Population();
-            wholePopulation.Solutions.AddRange(firstPopulation);
-            wholePopulation.Solutions.AddRange(secondPopulation);
-            wholePopulation.Solutions.AddRange(thirdPopulation);
-            wholePopulation.Solutions.AddRange(fourthPopulation);
-            wholePopulation.Solutions.AddRange(fithPopulation);
-
-            return convertSolution(algorithm.FindSolution(wholePopulation, amountOfGenerations));
-        }
+        }        
 
         private TeamSuggestion convertSolution(IEnumerable<Player> players)
         {

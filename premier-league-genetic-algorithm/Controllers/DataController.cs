@@ -1,6 +1,7 @@
 ﻿using GAF;
 using Newtonsoft.Json;
 using premier_league_genetic_algorithm.BL;
+using premier_league_genetic_algorithm.BL.Performance.ChartJSPerformanceMonitor;
 using premier_league_genetic_algorithm.Data;
 using premier_league_genetic_algorithm.Models;
 using System;
@@ -39,14 +40,41 @@ namespace premier_league_genetic_algorithm.Controllers
         }
 
         [Route("GetPerformanceData")]
-        public object GetPerformance()
+        public ChartData GetPerformance()
         {
-            using (FileStream stream = new FileStream(@".\results\results.json", FileMode.Open))
+            ChartData finalData = new ChartData()
             {
-                StreamReader reader = new StreamReader(stream);
+                labels = new int[] { },
+                datasets = new Dataset[] {}
+            };
 
-                return JsonConvert.DeserializeObject(reader.ReadToEnd());
+            HashSet<int> allLabels = new HashSet<int>();
+            List<Dataset> allDataSets = new List<Dataset>();
+
+            ChartData tempData;
+
+            foreach (var file in Directory.GetFiles(@".\results", "results_*.json", SearchOption.TopDirectoryOnly))
+            {
+                using (FileStream stream = new FileStream(file, FileMode.Open))
+                {
+                    StreamReader reader = new StreamReader(stream);
+
+                    tempData = JsonConvert.DeserializeObject<ChartData>(reader.ReadToEnd());
+
+                    foreach (var label in tempData.labels)
+                    {
+                        allLabels.Add(label);
+                    }
+
+                    allDataSets.Add(tempData.datasets[0]);
+                    allDataSets.Add(tempData.datasets[1]);
+                }
             }
+
+            finalData.labels = allLabels.ToArray<int>();
+            finalData.datasets = allDataSets.ToArray<Dataset>();
+
+            return finalData;
         }
 
         [Route("GetPerformanceReport")]

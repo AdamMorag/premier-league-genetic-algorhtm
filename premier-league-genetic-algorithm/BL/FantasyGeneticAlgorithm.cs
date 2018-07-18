@@ -32,21 +32,13 @@ namespace premier_league_genetic_algorithm.BL
             this.groupedPlayers = players.GroupBy(p => p.element_type).ToDictionary(g => g.Key, x => x.ToList());
             this.calculator = new FitnessCaclulator(players);
             this.chromosomeUtils = new ChromosomeUtils(players, groupedPlayers);
-            this.performanceMonitor = new ChartJsPerformanceMonitor();
+            Console.WriteLine(DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss"));
+            this.performanceMonitor = new ChartJsPerformanceMonitor(DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss"));
         } 
         
         #endregion
 
         #region Public Methods
-
-        public IEnumerable<Player> FindSolution(Population population, int amountOfGenerations)
-        {
-            var newPopulation = this.runAlgorithem(population, amountOfGenerations);
-
-            var topSolution = this.chromosomeUtils.ConvertChromosome(newPopulation.GetTop(1).First());
-
-            return topSolution.OrderBy(p => p.element_type);
-        }
 
         public IEnumerable<Player> FindSolution(int populationSize, int amountOfGenerations)
         {
@@ -65,23 +57,7 @@ namespace premier_league_genetic_algorithm.BL
             var topSolution = this.chromosomeUtils.ConvertChromosome(newPopulation.GetTop(1).First());
 
             return topSolution.OrderBy(p => p.element_type);
-        }
-
-        public Population FindPopulation(int populationSize, int amountOfGenerations)
-        {
-            //create the population
-            var population = new Population();
-
-            //create the chromosomes
-            for (var p = 0; p < populationSize; p++)
-            {
-                Chromosome chromosome = this.chromosomeUtils.GenerateRandomSolution();
-                population.Solutions.Add(chromosome);
-            }
-
-
-            return this.runAlgorithem(population, amountOfGenerations);
-        }
+        }        
 
         #endregion
 
