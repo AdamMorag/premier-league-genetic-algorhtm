@@ -11,16 +11,17 @@ namespace premier_league_genetic_algorithm.BL.Performance.ChartJSPerformanceMoni
 {
     public class ChartJsPerformanceMonitor : PerformanceMonitor
     {
-        private Dictionary<int, double> performanceData;
+        private Dictionary<int, Tuple<double, double>> performanceData;
 
         public ChartJsPerformanceMonitor()
         {
-            this.performanceData = new Dictionary<int, double>();
+            this.performanceData = new Dictionary<int, Tuple<double, double>>();
         }
 
         public override void LogPerformance(GaEventArgs generationCompleteEvent)
         {
-            this.performanceData[generationCompleteEvent.Generation] = generationCompleteEvent.Population.MaximumFitness;
+            this.performanceData[generationCompleteEvent.Generation] = 
+                new Tuple<double, double>(generationCompleteEvent.Population.MaximumFitness, generationCompleteEvent.Population.AverageFitness);
         }
 
         public override void SavePerformanceLog(string pathToFolder)
@@ -41,10 +42,17 @@ namespace premier_league_genetic_algorithm.BL.Performance.ChartJSPerformanceMoni
                 datasets = new Dataset[]
                 { new Dataset()
                     {
-                        label = "Fitness",
+                        label = "Max Fitness",
                         borderColor = "#3e95cd",
                         fill = true,
-                        data = this.performanceData.Values.ToArray()
+                        data = this.performanceData.Values.Select(v => v.Item1).ToArray()
+                    },
+                    new Dataset()
+                    {
+                        label = "Avg Fitness",
+                        borderColor = "#123411",
+                        fill = true,
+                        data = this.performanceData.Values.Select(v => v.Item2).ToArray()
                     }
                 }
             };
